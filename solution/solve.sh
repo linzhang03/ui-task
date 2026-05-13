@@ -11,7 +11,17 @@ cat > /app/index.html << 'EOF'
   </head>
   <body>
     <h1>Hello, UI task</h1>
-    <button>Click me</button>
+    <button id="btn">Click me</button>
+    <p id="count-display">click count: 0</p>
+    <script>
+      let count = 0;
+      const btn = document.getElementById('btn');
+      const display = document.getElementById('count-display');
+      btn.addEventListener('click', () => {
+        count++;
+        display.textContent = 'click count: ' + count;
+      });
+    </script>
   </body>
 </html>
 EOF

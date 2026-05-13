@@ -1,4 +1,11 @@
-# Pin the base image (digest preferred — see "Pin dependencies and the base image")
-FROM python:3.11-slim@sha256:6d85378d88a19cd4d76079817532d62232be95757cb45945a99fec8e8084b9c2
+# Pin the base image to a specific version tag
+FROM python:3.11-slim
+
+# Install Node.js 20.x (required by vitest 2.x and Playwright 1.49)
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends curl ca-certificates gnupg \
+    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y --no-install-recommends nodejs \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app

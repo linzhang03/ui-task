@@ -6,12 +6,8 @@ if [ "$PWD" = "/" ]; then
   exit 1
 fi
 
-# Install runtime tooling needed by the verifier image.
-export DEBIAN_FRONTEND=noninteractive
-apt-get update
-apt-get install -y --no-install-recommends nodejs npm
-
 # Install test deps, Playwright system deps, and browser at run time (keeps image small).
+# Node.js 20 is pre-installed in the Docker image.
 cd /tests
 npm ci
 npx playwright install-deps chromium

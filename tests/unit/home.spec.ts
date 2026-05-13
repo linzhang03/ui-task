@@ -32,4 +32,10 @@ describe("UI task page", () => {
     await user.click(button);
     expect(document.activeElement).toBe(button);
   });
+
+  it("shows click count: 0 initially", () => {
+    const counter = document.querySelector("#count-display");
+    expect(counter).toBeTruthy();
+    expect(counter?.textContent).toBe("click count: 0");
+  });
 });
