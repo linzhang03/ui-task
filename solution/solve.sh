@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Oracle solution: create the minimal web app at /app for the verifier to serve and test.
-cat > /app/index.html << 'EOF'
+# Oracle solution: create the app at the task root so it works both locally and in the sandbox.
+script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+task_root=$(cd "${script_dir}/.." && pwd)
+
+cat > "${task_root}/index.html" << 'EOF'
 <!DOCTYPE html>
 <html lang="en">
   <head>

@@ -1,5 +1,7 @@
 Build a simple web app at the task root (in the sandbox this is `/app`) so that the main page is served at the root URL (`/`).
 
+Implementation note: wire the button behavior from JavaScript using `addEventListener` after the DOM elements exist. Do not rely on inline `onclick` handlers that reference variables defined in a separate `<script>` block.
+
 The page must have:
 
 1. **Document title** – The `<title>` must be `UI task`.

@@ -5,7 +5,7 @@ version = "2.0"
 [metadata]
 author_name = "anonymous"
 author_email = "anonymous"
-difficulty = "easy"
+difficulty = "medium"
 category = "software-engineering"
 # Options for subcategories are: "long_context", "tool_specific", "api_integration", "db_interaction", "ui_building"
 subcategories = [ "ui_building" ]
@@ -17,8 +17,8 @@ languages = [ "bash", "html" ]
 tags = ["html", "static-site", "ui-building", "playwright", "vitest"] 
 # Estimated time to complete (minutes)
 number_of_milestones = 0
-expert_time_estimate_min = 5
-junior_time_estimate_min = 15
+expert_time_estimate_min = 35
+junior_time_estimate_min = 60
 
 # Verifier: runs the test script to check task completion
 [verifier]
