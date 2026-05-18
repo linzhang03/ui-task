@@ -17,8 +17,8 @@ languages = [ "bash", "html" ]
 tags = ["html", "static-site", "ui-building", "playwright", "vitest"] 
 # Estimated time to complete (minutes)
 number_of_milestones = 0
-expert_time_estimate_min = 35
-junior_time_estimate_min = 60
+expert_time_estimate_min = 45
+junior_time_estimate_min = 75
 
 # Verifier: runs the test script to check task completion
 [verifier]

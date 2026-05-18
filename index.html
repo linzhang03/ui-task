@@ -6,16 +6,51 @@
   </head>
   <body>
     <h1>Hello, UI task</h1>
-    <button id="btn">Click me</button>
+    <button id="click-button">Click me</button>
+    <button id="reset-button" disabled>Reset count</button>
     <p id="count-display">click count: 0</p>
+    <p id="status-display">Ready to be clicked</p>
+    <p id="milestone-message" hidden>Milestone reached</p>
     <script>
       let count = 0;
-      const btn = document.getElementById('btn');
+      const limit = 10;
+      const clickButton = document.getElementById('click-button');
+      const resetButton = document.getElementById('reset-button');
       const display = document.getElementById('count-display');
-      btn.addEventListener('click', () => {
-        count++;
+      const status = document.getElementById('status-display');
+      const milestone = document.getElementById('milestone-message');
+
+      function render() {
         display.textContent = 'click count: ' + count;
+
+        if (count === 0) {
+          status.textContent = 'Ready to be clicked';
+        } else if (count === 1) {
+          status.textContent = 'clicked once';
+        } else if (count >= limit) {
+          status.textContent = 'limit reached';
+        } else {
+          status.textContent = 'clicked ' + count + ' times';
+        }
+
+        clickButton.disabled = count >= limit;
+        resetButton.disabled = count === 0;
+        milestone.hidden = count < 5;
+      }
+
+      clickButton.addEventListener('click', () => {
+        if (count < limit) {
+          count += 1;
+          render();
+        }
       });
+
+      resetButton.addEventListener('click', () => {
+        count = 0;
+        render();
+      });
+
+      render();
     </script>
   </body>
 </html>
