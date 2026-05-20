@@ -1,19 +1,26 @@
 Build a simple web app at the task root (in the sandbox this is `/app`) so that the main page is served at the root URL (`/`).
 
-Implementation note: wire the button behavior from JavaScript using `addEventListener` after the required DOM elements are available. A `<script>` placed after those elements, such as at the end of `<body>`, is acceptable. Do not rely on inline `onclick` handlers that reference variables defined in a separate `<script>` block.
+Behavior requirements:
 
-The page must have:
+- The page title must be `UI task`.
+- The page must show a heading with the exact text `Hello, UI task`.
+- The app must accept three integer inputs representing `l`, `r`, and `k`. Their initial values must be `1`, `10`, and `2`.
+- The page must include a primary button labeled `Click me`. When the button is clicked, the app must calculate how many integers `y` in the inclusive range `[l, r]` are perfect `k`th powers, where `y` is a perfect `k`th power if there exists an integer `x` such that `y = x^k`. After the click is handled, the `Click me` button must remain focused.
+- Count distinct integers `y`, not base values `x`. In particular, when `k` is even, `x` and `-x` produce the same `y`, so those outputs must only be counted once.
+- The page must include a reset button labeled `Reset count`. It must be disabled on first render, become enabled after any primary-button click attempt (including invalid input), and reset the app back to its initial state when clicked.
+- The result text must start at `perfect kth powers: 0` and update after each successful calculation.
+- The status text must start as `Enter integer l, r, and k, then click the button`, change to `Calculated for [{l}, {r}] with k = {k}` after a successful calculation, and use the exact text `l must be less than or equal to r.` when `l > r`.
+- A completion message with the exact text `Calculation complete` must include the HTML `hidden` attribute on first render, remove that `hidden` attribute after a successful calculation, and add the `hidden` attribute again after reset or invalid input. Do not rely on CSS-only hiding for this element.
 
-1. **Document title** – The `<title>` must be `UI task`.
-2. **Heading** – A heading (e.g. `<h1>`) with the exact text `Hello, UI task`.
-3. **Primary button** – A button with the visible label `Click me` that can be focused when clicked. It increments the count by one until the count reaches `10`. At `10`, the button must become disabled.
-4. **Reset button** – A button with the visible label `Reset count` and `id="reset-button"`. It must be disabled when the count is `0`, enabled after at least one click, and reset the app back to its initial state when clicked.
-5. **Click counter** – A `<p>` element with `id="count-display"` that displays `click count: {count}` where `{count}` starts at `0`.
-6. **Status text** – A `<p>` element with `id="status-display"` whose text must be:
-	- `Ready to be clicked` when the count is `0`
-	- `clicked once` when the count is `1`
-	- `clicked {count} times` when the count is between `2` and `9`
-	- `limit reached` when the count is `10`
-7. **Milestone message** – A `<p>` element with `id="milestone-message"` and the exact text `Milestone reached`. It must use the HTML `hidden` attribute to be hidden while the count is below `5`, become visible at `5` or more by removing that attribute, and become hidden again after reset by restoring the `hidden` attribute.
+Examples:
 
-Create a file named exactly **`index.html`** at the task root (`/app/index.html`). The verifier will serve `/app` and run unit and E2E tests against this page.
+- For `l = 8`, `r = 30`, `k = 2`, the result is `3` because the values are `9`, `16`, and `25`.
+- For `l = -30`, `r = 30`, `k = 2`, the result is `6` because the values are `0`, `1`, `4`, `9`, `16`, and `25`.
+- For `l = -30`, `r = -1`, `k = 2`, the result is `0` because no negative integer is a perfect square.
+
+Verification requirements:
+
+- Create a file named exactly **`index.html`** at the task root (`/app/index.html`).
+- The verifier will serve `/app` and run unit and E2E tests against this page.
+- Use the following element ids so the verifier can locate the required UI: `l-input`, `r-input`, `k-input`, `reset-button`, `count-display`, `status-display`, and `milestone-message`.
+- Put the behavior in a script that runs after the DOM elements are defined, and attach event listeners in script rather than relying on `DOMContentLoaded`.

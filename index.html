@@ -6,51 +6,175 @@
   </head>
   <body>
     <h1>Hello, UI task</h1>
+    <label for="l-input">l</label>
+    <input id="l-input" name="l" type="number" step="1" value="1" />
+    <label for="r-input">r</label>
+    <input id="r-input" name="r" type="number" step="1" value="10" />
+    <label for="k-input">k</label>
+    <input id="k-input" name="k" type="number" step="1" value="2" />
     <button id="click-button">Click me</button>
     <button id="reset-button" disabled>Reset count</button>
-    <p id="count-display">click count: 0</p>
-    <p id="status-display">Ready to be clicked</p>
-    <p id="milestone-message" hidden>Milestone reached</p>
+    <p id="count-display">perfect kth powers: 0</p>
+    <p id="status-display">Enter integer l, r, and k, then click the button</p>
+    <p id="milestone-message" hidden>Calculation complete</p>
     <script>
-      let count = 0;
-      const limit = 10;
+      const initialValues = {
+        l: '1',
+        r: '10',
+        k: '2'
+      };
       const clickButton = document.getElementById('click-button');
       const resetButton = document.getElementById('reset-button');
-      const display = document.getElementById('count-display');
+      const lInput = document.getElementById('l-input');
+      const rInput = document.getElementById('r-input');
+      const kInput = document.getElementById('k-input');
+      const resultDisplay = document.getElementById('count-display');
       const status = document.getElementById('status-display');
       const milestone = document.getElementById('milestone-message');
 
-      function render() {
-        display.textContent = 'click count: ' + count;
+      function absBigInt(value) {
+        return value < 0n ? -value : value;
+      }
 
-        if (count === 0) {
-          status.textContent = 'Ready to be clicked';
-        } else if (count === 1) {
-          status.textContent = 'clicked once';
-        } else if (count >= limit) {
-          status.textContent = 'limit reached';
-        } else {
-          status.textContent = 'clicked ' + count + ' times';
+      function powWithinLimit(base, exponent, limit) {
+        let result = 1n;
+        let factor = base;
+        let power = exponent;
+
+        while (power > 0) {
+          if (power % 2 === 1) {
+            result *= factor;
+            if (result > limit) {
+              return limit + 1n;
+            }
+          }
+
+          power = Math.floor(power / 2);
+          if (power > 0) {
+            factor *= factor;
+            if (factor > limit) {
+              factor = limit + 1n;
+            }
+          }
         }
 
-        clickButton.disabled = count >= limit;
-        resetButton.disabled = count === 0;
-        milestone.hidden = count < 5;
+        return result;
+      }
+
+      function integerRootFloorNonNegative(value, exponent) {
+        if (value < 2n) {
+          return value;
+        }
+
+        let low = 1n;
+        let high = value;
+        let answer = 1n;
+
+        while (low <= high) {
+          const mid = (low + high) / 2n;
+          const powered = powWithinLimit(mid, exponent, value);
+
+          if (powered <= value) {
+            answer = mid;
+            low = mid + 1n;
+          } else {
+            high = mid - 1n;
+          }
+        }
+
+        return answer;
+      }
+
+      function integerRootFloor(value, exponent) {
+        if (value >= 0n) {
+          return integerRootFloorNonNegative(value, exponent);
+        }
+
+        return -integerRootFloorNonNegative(absBigInt(value), exponent);
+      }
+
+      function integerRootCeil(value, exponent) {
+        if (value >= 0n) {
+          const floorRoot = integerRootFloorNonNegative(value, exponent);
+          return powWithinLimit(floorRoot, exponent, value) === value ? floorRoot : floorRoot + 1n;
+        }
+
+        const positiveFloor = integerRootFloorNonNegative(absBigInt(value), exponent);
+        return -positiveFloor;
+      }
+
+      function countPerfectKthPowers(left, right, exponent) {
+        if (exponent % 2 === 1) {
+          const smallestBase = integerRootCeil(left, exponent);
+          const largestBase = integerRootFloor(right, exponent);
+          return largestBase >= smallestBase ? largestBase - smallestBase + 1n : 0n;
+        }
+
+        if (right < 0n) {
+          return 0n;
+        }
+
+        const lowerBound = left > 0n ? left : 0n;
+        const smallestBase = integerRootCeil(lowerBound, exponent);
+        const largestBase = integerRootFloor(right, exponent);
+        return largestBase >= smallestBase ? largestBase - smallestBase + 1n : 0n;
+      }
+
+      function parseInteger(value) {
+        if (!/^[-+]?\d+$/.test(value.trim())) {
+          throw new Error('Inputs must be integers.');
+        }
+
+        return BigInt(value.trim());
+      }
+
+      function renderInitialState() {
+        resultDisplay.textContent = 'perfect kth powers: 0';
+        status.textContent = 'Enter integer l, r, and k, then click the button';
+        milestone.hidden = true;
+        resetButton.disabled = true;
+      }
+
+      function setInputs(values) {
+        lInput.value = values.l;
+        rInput.value = values.r;
+        kInput.value = values.k;
       }
 
       clickButton.addEventListener('click', () => {
-        if (count < limit) {
-          count += 1;
-          render();
+        try {
+          const left = parseInteger(lInput.value);
+          const right = parseInteger(rInput.value);
+          const exponent = parseInteger(kInput.value);
+
+          if (left > right) {
+            throw new Error('l must be less than or equal to r.');
+          }
+
+          if (exponent <= 0n) {
+            throw new Error('k must be greater than 0.');
+          }
+
+          const total = countPerfectKthPowers(left, right, Number(exponent));
+          resultDisplay.textContent = 'perfect kth powers: ' + total.toString();
+          status.textContent = 'Calculated for [' + left.toString() + ', ' + right.toString() + '] with k = ' + exponent.toString();
+          milestone.hidden = false;
+          resetButton.disabled = false;
+        } catch (error) {
+          resultDisplay.textContent = 'perfect kth powers: 0';
+          status.textContent = error.message;
+          milestone.hidden = true;
+          resetButton.disabled = false;
         }
       });
 
       resetButton.addEventListener('click', () => {
-        count = 0;
-        render();
+        setInputs(initialValues);
+        renderInitialState();
       });
 
-      render();
+      setInputs(initialValues);
+      renderInitialState();
     </script>
   </body>
 </html>

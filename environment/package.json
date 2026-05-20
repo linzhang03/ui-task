@@ -1,12 +1,6 @@
 {
-  "name": "ui-task-app",
+  "name": "ui-task-environment",
   "version": "1.0.0",
   "private": true,
-  "description": "Simple UI task web application",
-  "scripts": {
-    "start": "serve . -p 3000"
-  },
-  "devDependencies": {
-    "serve": "14.2.4"
-  }
+  "description": "Base environment image for the UI task verifier"
 }

@@ -6,12 +6,24 @@ if [ "$PWD" = "/" ]; then
   exit 1
 fi
 
-# Install test deps, Playwright system deps, and browser at run time (keeps image small).
-# Node.js 20 is pre-installed in the Docker image.
+# Install the test toolchain during the test step using the image's preseeded offline npm cache.
 cd /tests
-npm ci
-npx playwright install-deps chromium
-npx playwright install chromium
+export PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+export npm_config_cache=/opt/ui-task-npm-cache
+
+if [ ! -d /opt/ui-task-npm-cache ]; then
+  echo "Error: missing offline npm cache at /opt/ui-task-npm-cache"
+  exit 1
+fi
+
+if [ ! -f /opt/ui-task-test-seed/package-lock.json ]; then
+  echo "Error: missing seeded package-lock.json at /opt/ui-task-test-seed/package-lock.json"
+  exit 1
+fi
+
+rm -rf /tests/node_modules
+cp /opt/ui-task-test-seed/package-lock.json /tests/package-lock.json
+npm ci --offline --ignore-scripts --no-audit --no-fund
 
 UNIT_EXIT=0
 E2E_EXIT=0
